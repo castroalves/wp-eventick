@@ -1,7 +1,7 @@
 <?php
 
 /*
- *	Plugin Name: Eventick Event List
+ *	Plugin Name: WP Eventick
  *	Plugin URI: http://eventick.com.br
  *	Description: Adicione a agenda de eventos do Eventick em seu site.
  *	Version: 1.0
