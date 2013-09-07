@@ -28,7 +28,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-require_once( plugin_dir_path( __FILE__ ) . 'eventick-api/vendor/autoload.php');
+require_once( plugin_dir_path( __FILE__ ) . 'eventickapi_php/vendor/autoload.php');
 
 use Eventick\Lib\EventickAPI;
 
