@@ -44,6 +44,14 @@ function eventick_event_list_settings_page() {
 	include( plugin_dir_path( __FILE__ ) . 'wp-eventick-settings.php');	
 }
 
+function plugin_add_settings_link( $links ) {
+    $settings_link = '<a href="options-general.php?page=wp-eventick-settings.php">Settings</a>';
+  	array_push( $links, $settings_link );
+  	return $links;
+}
+$plugin = plugin_basename( __FILE__ );
+add_filter( "plugin_action_links_$plugin", 'plugin_add_settings_link' );
+
 //tell wordpress to register the demolistposts shortcode
 add_shortcode("eventick_list", "eventick_event_list");
 
