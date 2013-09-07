@@ -1,0 +1,3 @@
+[submodule "eventickapi_php"]
+	path = eventickapi_php
+	url = https://github.com/djalmaaraujo/eventickapi_php
