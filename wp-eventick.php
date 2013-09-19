@@ -3,14 +3,14 @@
 /*
  *	Plugin Name: WP Eventick
  *	Plugin URI: http://eventick.com.br
- *	Description: Adicione a agenda de eventos do Eventick em seu site.
+ *	Description: Eventick é o jeito mais fácil de gerenciar seu evento e vender ingressos online.
  *	Version: 1.0
  *	Author: Cadu de Castro Alves
  *	Author URI: http://twitter.com/castroalves
  */
 
 /*
-Eventick Shortcodes (Wordpress Plugin)
+WP Eventick (Wordpress Plugin)
 Copyright (C) 2013 Cadu de Castro Alves
 Contact me at http://twitter.com/castroalves
 
@@ -32,7 +32,7 @@ require_once( plugin_dir_path( __FILE__ ) . 'eventickapi_php/vendor/autoload.php
 
 use Eventick\Lib\EventickAPI;
 
-// admin page
+// Admin Page
 function eventick_event_list_settings_actions() {
 
 	add_options_page("Eventick Settings", "Eventick Settings", "manage_options", "wp-eventick-settings.php", "eventick_event_list_settings_page");
@@ -40,10 +40,12 @@ function eventick_event_list_settings_actions() {
 }
 add_action( 'admin_menu', 'eventick_event_list_settings_actions' );
 
+// Settings Page
 function eventick_event_list_settings_page() {
 	include( plugin_dir_path( __FILE__ ) . 'wp-eventick-settings.php');	
 }
 
+// Link to Settings Page in WordPress Plugins List
 function plugin_add_settings_link( $links ) {
     $settings_link = '<a href="options-general.php?page=wp-eventick-settings.php">Settings</a>';
   	array_push( $links, $settings_link );
@@ -52,57 +54,116 @@ function plugin_add_settings_link( $links ) {
 $plugin = plugin_basename( __FILE__ );
 add_filter( "plugin_action_links_$plugin", 'plugin_add_settings_link' );
 
-//tell wordpress to register the demolistposts shortcode
+/* Eventick Event List Shortcode */
 add_shortcode("eventick_list", "eventick_event_list");
-
 function eventick_event_list( $atts, $content = null ) {
 
-	$api = new EventickAPI;
-	$api->setCredentials( get_option( 'eventick_username' ), get_option( 'eventick_password' ) );
-	$api->auth(); // Authenticates you
+	$username = get_option( 'eventick_username' );
+	$password = get_option( 'eventick_password' );
 
-	$events = $api->events(); // Grab events
+	if( $username != '' && $password != '' ) {
+		$api = new EventickAPI;
+		$api->setCredentials( get_option( 'eventick_username' ), get_option( 'eventick_password' ) );
+		$api->auth(); // Authenticates you
 
-	extract( shortcode_atts( array(
-		'venue_before' => '',
-		'venue_after' => '<br />',
-		'date_before' => '',
-		'date_after' => '<br />',
-		'button_label' => 'Inscreva-se Já!',
-		'button_class' => '',
-		'button_target' => '_blank',
-		'order' => 'ASC',
-	), $atts ) );
+		$events = $api->events(); // Grab events
 
-	if( strtolower( $order ) == 'asc' ) {
-		asort( $events ); // order by ID asc
-	}
+		extract( shortcode_atts( array(
+			'venue_before' => '',
+			'venue_after' => '<br />',
+			'date_before' => '',
+			'date_after' => '<br />',
+			'button_label' => 'Inscreva-se Já!',
+			'button_class' => '',
+			'button_target' => '_blank',
+			'order' => 'ASC',
+		), $atts ) );
 
-	$html = '<dl class="event-list">';
-	foreach ($events as $event) {
-		$now = strtotime('now');
-		if( strtotime( $event->start_at ) >= $now ) {
-			$item = $api->event($event->id);
+		if( strtolower( $order ) == 'asc' ) {
+			asort( $events ); // order by ID asc
+		}
 
-			$event_title = $item->title;
-			$event_venue = $item->venue;
-			list( $event_date, $event_time ) = explode('T', $item->start_at);
-			list( $event_start_time, $event_end_time ) = explode('-', $event_time);
+		$html = '';
+		if( count( $events ) > 0 ) {
+			$html .= '<dl class="event-list">';
+			foreach ($events as $event) {
+				$now = strtotime('now');
+				if( strtotime( $event->start_at ) >= $now ) {
+					$item = $api->event($event->id);
 
-			$event_date = date( "d/m/Y", strtotime( $event_date ) );
-			$event_time = date( "H:i", strtotime( $event_start_time ) );
-			$event_slug = $item->slug;
+					$event_title = $item->title;
+					$event_venue = $item->venue;
+					list( $event_date, $event_time ) = explode('T', $item->start_at);
+					list( $event_start_time, $event_end_time ) = explode('-', $event_time);
 
-			$html .= '<dt class="event-title">' . $event_title . '</dt>';
-			$html .= '<dd class="event-info">';
-			$html .= $venue_before . $event_venue . $venue_after;
-			$html .= $date_before . $event_date . ', às ' . $event_time . $date_after;
-			$html .= '<a class="' . $button_class . '" href="http://eventick.com.br/' . $event_slug . '" title="' . $event_title . '" alt="' . $event_title . '" target="' . $button_target . '">' . $button_label . '</a>';
-			$html .= '</dd>';
+					$event_date = date( "d/m/Y", strtotime( $event_date ) );
+					$event_time = date( "H:i", strtotime( $event_start_time ) );
+					$event_slug = $item->slug;
+
+					$html .= '<dt class="event-title">' . $event_title . '</dt>';
+					$html .= '<dd class="event-info">';
+					$html .= $venue_before . $event_venue . $venue_after;
+					$html .= $date_before . $event_date . ', às ' . $event_time . $date_after;
+					$html .= '<a class="' . $button_class . '" href="http://eventick.com.br/' . $event_slug . '" title="' . $event_title . '" alt="' . $event_title . '" target="' . $button_target . '">' . $button_label . '</a>';
+					$html .= '</dd>';
+				}
+			}
+
+			$html .= '</dl>';
+
+			return $html;
+		} else {
+			$html = '<h3>Não há eventos cadastrados em sua conta.</h3>'
 		}
 	}
 
-	$html .= '</dl>';
+}
+
+/* Eventick Shortcode */
+
+add_shortcode("eventick", "eventick_shortcode");
+function eventick_shortcode( $atts, $content = null ) {
+
+	extract( shortcode_atts( array(
+		'width' => '100%',
+		'height' => '280px',
+		'url' => '',
+		'type' => 'tickets',
+		'size' => 'm',
+		'label' => 'vaga'
+	), $atts ) );
+
+	$content = ( $content != null ) ? $content : 'Compre seu ingresso no Eventick';
+
+	$arr_size = array(
+		'p' => 'small',
+		'm' => 'medium',
+		'g' => 'big'
+	);
+
+	$html = '';
+	if( $type == 'tickets' ) {
+		$html  = '<iframe ';
+		$html .= 'src="' . untrailingslashit( $url ) . '/embedded" ';
+		$html .= 'frameborder="0" ';
+		$html .= 'height="' . $height . '" '; 
+		$html .= 'width="'. $width .'" '; 
+		$html .= 'vspace="0" '; 
+		$html .= 'hspace="0" '; 
+		$html .= 'marginheight="5" '; 
+		$html .= 'marginwidth="5" '; 
+		$html .= 'scrolling="auto" '; 
+		$html .= 'allowtransparency="true">'; 
+		$html .= '</iframe>';
+	}
+
+	if( $type == 'button' ) {
+		$html  = '<a href="' . untrailingslashit( $url ) . '" target="_blank" ';
+		$html .= 'title="' . $content . '"> ';
+		$html .= '<img alt="' . $content . '" ';
+		$html .= 'src="http://www.eventick.com.br/assets/buttons/' . $label . '-' . $arr_size[ strtolower($size) ] . '.png">';
+		$html .= '</a>';
+	}
 
 	return $html;
 
