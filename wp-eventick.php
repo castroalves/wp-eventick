@@ -62,6 +62,7 @@ function eventick_event_list( $atts, $content = null ) {
 	$password = get_option( 'eventick_password' );
 
 	if( $username != '' && $password != '' ) {
+
 		$api = new EventickAPI;
 		$api->setCredentials( get_option( 'eventick_username' ), get_option( 'eventick_password' ) );
 		$api->auth(); // Authenticates you
@@ -111,10 +112,11 @@ function eventick_event_list( $atts, $content = null ) {
 
 			$html .= '</dl>';
 
-			return $html;
 		} else {
-			$html = '<h3>Não há eventos cadastrados em sua conta.</h3>'
+			$html = '<h3>Não há eventos cadastrados em sua conta.</h3>';
 		}
+
+		return $html;
 	}
 
 }
