@@ -8,7 +8,7 @@ Adicione seus eventos do Eventick no WordPress.
 2. No Painel Administrativo do WordPress, acesse Plugins e ative o plugin WP Eventick
 3. Acesse 'Configurações > Eventick' e informe seus dados de acesso ao Eventick
 
-## Adicionando a Lista de Eventos
+## Como Listar os Eventos
 Na página de edição de posts ou páginas, adicione o código a seguir:
 
 	[eventick_list]
@@ -24,7 +24,7 @@ Na página de edição de posts ou páginas, adicione o código a seguir:
 * **button_target:** Destino do link. Padrão: `_blank` (abrir em uma nova janela).
 * **order:** Ordem de exibição dos eventos de acordo com a data. Padrão: `ASC` (data crescente).
 
-## Integrando as Inscrições
+## Como Disponibilizar Inscrições
 Na página de edição de posts ou páginas, adicione o código a seguir:
 
     [eventick url="http://eventick.com.br/seu-evento"]
@@ -35,14 +35,7 @@ Substitua `seu-evento` pelo slug que o Eventick gerou para seu evento.
 
 	[eventick url="http://eventick.com.br/seu-evento" type="button"]
 
-### Mais Informações
-
-Leia o [Guia de Integração do Eventick](http://developer.eventick.com.br/integracao).
-
-### Dúvidas, sugestões ou bugs? Fale Comigo.
-
-Twitter: [@castroalves](http://twitter.com/castroalves)<br />
-Facebook: http://facebook.com/cadudecastroalves
+## Adicionando o box de venda de ingressos
 
 	[eventick url="http://eventick.com.br/seu-evento" type="tickets"]
 
